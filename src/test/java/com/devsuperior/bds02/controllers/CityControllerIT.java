@@ -1,11 +1,8 @@
 package com.devsuperior.bds02.controllers;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import com.devsuperior.bds02.dto.CityDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,8 +13,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.devsuperior.bds02.dto.CityDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -29,6 +27,20 @@ public class CityControllerIT {
 	
 	@Autowired
 	private ObjectMapper objectMapper;
+
+	private long nonExistingId;
+
+	private long dependentId;
+
+	private long independentId;
+
+	@BeforeEach
+	void setup() throws Exception{
+
+		independentId =5L;
+		dependentId =1L;
+		nonExistingId=50L;
+	}
 	
 	@Test
 	public void findAllShouldReturnAllResourcesSortedByName() throws Exception {
@@ -62,21 +74,16 @@ public class CityControllerIT {
 
 	@Test
 	public void deleteShouldReturnNoContentWhenIndependentId() throws Exception {		
-		
-		Long independentId = 5L;
-		
+
 		ResultActions result =
 				mockMvc.perform(delete("/cities/{id}", independentId));
-		
-		
+
 		result.andExpect(status().isNoContent());
 	}
 
 	@Test
 	public void deleteShouldReturnNotFoundWhenNonExistingId() throws Exception {		
 
-		Long nonExistingId = 50L;
-		
 		ResultActions result =
 				mockMvc.perform(delete("/cities/{id}", nonExistingId));
 
@@ -85,10 +92,8 @@ public class CityControllerIT {
 
 	@Test
 	@Transactional(propagation = Propagation.NEVER) 
-	public void deleteShouldReturnBadRequestWhenDependentId() throws Exception {		
+	public void deleteShouldReturnBadRequestWhenDependentId() throws Exception {
 
-		Long dependentId = 1L;
-		
 		ResultActions result =
 				mockMvc.perform(delete("/cities/{id}", dependentId));
 				
