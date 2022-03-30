@@ -41,7 +41,7 @@ public class CityControllerIT {
 		dependentId =1L;
 		nonExistingId=50L;
 	}
-	
+
 	@Test
 	public void findAllShouldReturnAllResourcesSortedByName() throws Exception {
 		
